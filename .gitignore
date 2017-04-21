@@ -1,0 +1,8 @@
+.DS_Store
+.tern-project
+target
+.classpath
+.project
+.settings
+dependency-reduced-pom.xml
+/node_modules
