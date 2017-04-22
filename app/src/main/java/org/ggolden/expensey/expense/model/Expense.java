@@ -16,25 +16,37 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
+package org.ggolden.expensey.expense.model;
 
 import java.util.Date;
 
-import org.ggolden.expensey.auth.model.Authentication;
-import org.ggolden.expensey.test.ModelTest;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthenticationTest extends ModelTest<Authentication>
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * Model an expense.
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Expense
 {
-	@Override
-	protected String getFixtureName()
-	{
-		return "fixtures/auth.json";
-	}
+	/** expense ID */
+	@JsonProperty("id")
+	protected String _id;
 
-	@Override
-	protected Authentication mockObjectAsFixture()
-	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
-	}
+	/** amount spent */
+	protected Float amount;
+
+	/** date spent */
+	protected Date date;
+
+	/** description of expense */
+	protected String description;
+
+	/** user spending */
+	protected String userId;
 }

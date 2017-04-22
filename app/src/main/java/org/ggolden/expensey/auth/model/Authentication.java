@@ -32,8 +32,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Authentication {
-
+public class Authentication
+{
 	/** The authentication id - can be used as a token to authenticate-by-token. */
 	@JsonProperty("id")
 	protected String _id;

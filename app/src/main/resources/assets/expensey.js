@@ -16,25 +16,9 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
-
-import java.util.Date;
-
-import org.ggolden.expensey.auth.model.Authentication;
-import org.ggolden.expensey.test.ModelTest;
-
-public class AuthenticationTest extends ModelTest<Authentication>
+(function()
 {
-	@Override
-	protected String getFixtureName()
-	{
-		return "fixtures/auth.json";
-	}
+	// establish the "Expensey" angular module
+	angular.module("Expensey", [ "ngRoute", "ui.bootstrap" ]);
 
-	@Override
-	protected Authentication mockObjectAsFixture()
-	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
-	}
-}
+})();

@@ -16,25 +16,32 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
-
-import java.util.Date;
-
-import org.ggolden.expensey.auth.model.Authentication;
-import org.ggolden.expensey.test.ModelTest;
-
-public class AuthenticationTest extends ModelTest<Authentication>
+(function()
 {
-	@Override
-	protected String getFixtureName()
+	angular.module("Expensey").config(Routes);
+
+	function Routes($routeProvider)
 	{
-		return "fixtures/auth.json";
+		$routeProvider.when("/nutshells",
+		{
+			templateUrl : "/nutshells.html",
+			controller : "Nutshells",
+			controllerAs : "ctrl"
+		})
+
+		.when("/login",
+		{
+			templateUrl : "/login.html",
+			controller : "Login",
+			controllerAs : "ctrl"
+		})
+
+		.otherwise(
+		{
+			redirectTo : "/login"
+		});
 	}
 
-	@Override
-	protected Authentication mockObjectAsFixture()
-	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
-	}
-}
+	/** ************************************************************************************************************************************************************ */
+
+})();

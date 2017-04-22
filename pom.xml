@@ -36,7 +36,6 @@ limitations under the License.
 				<module>app</module>
 				<module>external</module>
 				<module>master</module>
-				<module>test</module>
 			</modules>
 		</profile>
 	</profiles>

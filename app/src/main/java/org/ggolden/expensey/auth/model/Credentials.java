@@ -28,11 +28,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Credentials {
-
+public class Credentials
+{
 	/** The (clear text) password. */
 	protected String password;
 
 	/** The user ID. */
-	protected String userID;
+	protected String userId;
 }

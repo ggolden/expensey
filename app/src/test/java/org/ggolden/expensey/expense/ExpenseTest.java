@@ -16,25 +16,25 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
+package org.ggolden.expensey.expense;
 
 import java.util.Date;
 
-import org.ggolden.expensey.auth.model.Authentication;
+import org.ggolden.expensey.expense.model.Expense;
 import org.ggolden.expensey.test.ModelTest;
 
-public class AuthenticationTest extends ModelTest<Authentication>
+public class ExpenseTest extends ModelTest<Expense>
 {
 	@Override
 	protected String getFixtureName()
 	{
-		return "fixtures/auth.json";
+		return "fixtures/expense.json";
 	}
 
 	@Override
-	protected Authentication mockObjectAsFixture()
+	protected Expense mockObjectAsFixture()
 	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
+		final Expense expense = new Expense("ID", 100.50f, new Date(1L), "DESCRIPTION", "USER");
+		return expense;
 	}
 }

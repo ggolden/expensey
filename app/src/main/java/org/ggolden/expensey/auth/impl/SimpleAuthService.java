@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import org.ggolden.expensey.auth.AuthenticationService;
 import org.ggolden.expensey.auth.model.Authentication;
@@ -37,21 +37,29 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple implementation of the AuthenticationService.
+ * 
+ * In a real service,
+ * 
+ * - the known credentials would be persisted in a database
+ * 
+ * - the password in the know credentials would be stored as a hash, then checked by hashing the pw in the presented credentials (so even if hacked, the stored
+ * password would not be exposed)
+ * 
+ * - the authentications would be logged, probably to a database, for user access and usage tracking
  */
 @Service
-public class SimpleAuthService implements AuthenticationService {
+public class SimpleAuthService implements AuthenticationService
+{
 	final static private Logger logger = LoggerFactory.getLogger(SimpleAuthService.class);
 
-	// may show up as the IP address when testing
-	protected static byte[] noAddress = { 0, 0, 0, 0 };
+	/** To generate the next authentication id. TODO: usually this would be done by the database with an autoincrement column. */
+	protected AtomicInteger nextId = new AtomicInteger(1);
 
-	// authentications: mapped by token to the Authentication
+	/** authentications: mapped by token to the Authentication */
 	Map<String, Authentication> auths = new HashMap<>();
 
-	// pre-defined users
+	/** known users */
 	List<Credentials> credentials = new ArrayList<>();
-
-	// protected UserService userService;
 
 	/**
 	 * Create the authentication service
@@ -60,42 +68,53 @@ public class SimpleAuthService implements AuthenticationService {
 	 *            The configuration
 	 */
 	@Inject
-	public SimpleAuthService(/* UserService userService */) {
+	public SimpleAuthService(/* UserService userService */)
+	{
 		// this.userService = userService;
 		logger.info("SimpleAuthService()");
 
 		// fill out predefined credentials TODO: from config
-		this.credentials.add(new Credentials("Welcome123", "ggolden22@mac.com"));
-		this.credentials.add(new Credentials("Welcome123", "ggolden22@gmail.com"));
+		this.credentials.add(new Credentials("Welcome123", "user@mac.com"));
+		this.credentials.add(new Credentials("Welcome123", "user@gmail.com"));
 	}
 
 	@Override
-	public Optional<Authentication> authenticateByCredentials(Credentials credentials, String ipAddress) {
-
+	public Optional<Authentication> authenticateByCredentials(Credentials credentials, String ipAddress)
+	{
 		// check credentials
-		String user = "user";
+		int foundAt = this.credentials.indexOf(credentials);
+		if (foundAt == -1)
+		{
+			return Optional.empty();
+		}
+
+		// use the stored credentials for any values we need -
+		// the find process above might be less than fully strict (such as allowing case insensitive user id checks)
+		Credentials found = this.credentials.get(foundAt);
 
 		// generate a new ID
-		String id = "id";
+		String id = Integer.toString(this.nextId.getAndIncrement());
 
 		// create and record the authentication
-		Authentication auth = new Authentication(id, new Date(), ipAddress, user);
-		this.auths.put("id", auth);
+		Authentication auth = new Authentication(id, new Date(), ipAddress, found.getUserId());
+		this.auths.put(id, auth);
 
 		// return the authentication
 		return Optional.of(auth);
 	}
 
 	@Override
-	public Optional<Authentication> authenticateByToken(String token, HttpServletRequest req) {
-
+	public Optional<Authentication> authenticateByToken(String token, String fromIpAddress)
+	{
 		// check that the token is to a valid authentication
 		Authentication auth = this.auths.get(token);
-		if (auth == null) {
+		if (auth == null)
+		{
 			return Optional.empty();
 		}
 		// further check that the IP address is the same as when the authentication was created
-		if (auth.getIpAddress().equals(remoteAddr(req))) {
+		if (!auth.getIpAddress().equals(fromIpAddress))
+		{
 			return Optional.empty();
 		}
 
@@ -103,16 +122,87 @@ public class SimpleAuthService implements AuthenticationService {
 		return Optional.of(auth);
 	}
 
-	/**
-	 * Testing may not provide a request object... safe way to get the remote IP
-	 * 
-	 * @param req
-	 *            The request.
-	 * @return The remote IP, or null.
-	 */
-	protected String remoteAddr(HttpServletRequest req) {
-		if (req == null)
-			return null;
-		return req.getRemoteAddr();
+	@Override
+	public boolean changePassword(Authentication authentication, String newPassword)
+	{
+		// get the credentials
+		Optional<Credentials> found = this.credentials.stream().filter(c -> c.getUserId().equals(authentication.getUser())).findFirst();
+		if (!found.isPresent())
+		{
+			return false;
+		}
+
+		// we will also need the index of this so we can replace it later
+		int foundAt = this.credentials.indexOf(found.get());
+		if (foundAt == -1)
+		{
+			// this should not happen
+			logger.warn("changePassword(): could not find index of found credentials: " + found.get().getUserId());
+			return false;
+		}
+
+		// validate the new password TODO:
+
+		// create new credentials
+		Credentials replacement = new Credentials(newPassword, found.get().getUserId());
+
+		// replace
+		this.credentials.set(foundAt, replacement);
+
+		return true;
+	}
+
+	@Override
+	public Optional<Authentication> registerUser(Credentials credentials, String ipAddress)
+	{
+		// validate that the user ID has not already been registered
+		Optional<Credentials> found = this.credentials.stream().filter(c -> c.getUserId().equals(credentials.getUserId())).findFirst();
+		if (found.isPresent())
+		{
+			return Optional.empty();
+		}
+
+		// validate the new password TODO:
+
+		// store the new credentials
+		this.credentials.add(credentials);
+
+		// return the authentication
+		return this.authenticateByCredentials(credentials, ipAddress);
+	}
+
+	@Override
+	public void removeAuthentication(Authentication authentication)
+	{
+		// TODO: if storing authentications in the database, you might want to keep the record, but mark it closed.
+
+		// remove the authentication
+		this.auths.remove(authentication.get_id());
+	}
+
+	@Override
+	public void removeUser(String userID)
+	{
+		// find the existing credentials
+		Optional<Credentials> found = this.credentials.stream().filter(c -> c.getUserId().equals(userID)).findFirst();
+		if (!found.isPresent())
+		{
+			return;
+		}
+
+		int foundAt = this.credentials.indexOf(found.get());
+		if (foundAt == -1)
+		{
+			// this should not happen
+			logger.warn("removeUser(): could not find index of found credentials: " + found.get().getUserId());
+			return;
+		}
+
+		// remove
+		this.credentials.remove(foundAt);
+
+		// TODO: if we have records of authentications, we might want to clear them
+
+		// TODO: if currently authenticated, end it
 	}
 }

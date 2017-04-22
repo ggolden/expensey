@@ -16,25 +16,29 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
+package org.ggolden.expensey.expense;
 
 import java.util.Date;
+import java.util.Optional;
 
-import org.ggolden.expensey.auth.model.Authentication;
-import org.ggolden.expensey.test.ModelTest;
+import org.ggolden.expensey.expense.model.Expense;
+import org.jvnet.hk2.annotations.Contract;
 
-public class AuthenticationTest extends ModelTest<Authentication>
+@Contract
+public interface ExpenseService
 {
-	@Override
-	protected String getFixtureName()
-	{
-		return "fixtures/auth.json";
-	}
-
-	@Override
-	protected Authentication mockObjectAsFixture()
-	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
-	}
+	/**
+	 * Record a new expense
+	 * 
+	 * @param amount
+	 *            The expense amount.
+	 * @param date
+	 *            The expense date.
+	 * @param description
+	 *            The expense description.
+	 * @param userId
+	 *            The user ID of the user claiming the expense.
+	 * @return The recorded expense, or not if any fields are missing or invalid.
+	 */
+	Optional<Expense> addExpense(Float amount, Date date, String description, String userId);
 }

@@ -1,3 +1,31 @@
 # Copyright 2017 Glenn R. Golden
 
 environment: Expensey-Dev
+
+server:
+  adminContextPath: /admin
+  applicationContextPath: /
+  rootPath: /api
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+
+# Logging settings.
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+    org.ggolden.expensey: INFO
+    org.eclipse.jetty: INFO
+    io.dropwizard: INFO
+
+  appenders:
+    - type: console
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      timeZone: UTC

@@ -20,13 +20,17 @@ package org.ggolden.expensey.dw;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class Configuration extends io.dropwizard.Configuration {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class Configuration extends io.dropwizard.Configuration
+{
 	@NotEmpty
 	protected String environment = null;
 }

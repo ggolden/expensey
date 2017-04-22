@@ -19,16 +19,19 @@
 package org.ggolden.expensey.auth;
 
 import org.ggolden.expensey.auth.model.Credentials;
+import org.ggolden.expensey.test.ModelTest;
 
-public class CredentialsTest extends ModelTest<Credentials> {
-
+public class CredentialsTest extends ModelTest<Credentials>
+{
 	@Override
-	protected String getFixtureName() {
+	protected String getFixtureName()
+	{
 		return "fixtures/credentials.json";
 	}
 
 	@Override
-	protected Credentials mockObjectAsFixture() {
+	protected Credentials mockObjectAsFixture()
+	{
 		final Credentials auth = new Credentials("PW", "USER-ID");
 		return auth;
 	}

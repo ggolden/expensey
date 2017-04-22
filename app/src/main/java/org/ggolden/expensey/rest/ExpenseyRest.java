@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -41,6 +42,8 @@ import org.ggolden.expensey.auth.AuthenticationService;
 import org.ggolden.expensey.auth.model.Authentication;
 import org.ggolden.expensey.auth.model.Credentials;
 import org.ggolden.expensey.dw.Configuration;
+import org.ggolden.expensey.expense.ExpenseService;
+import org.ggolden.expensey.expense.model.Expense;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,16 +51,20 @@ import org.slf4j.LoggerFactory;
  * Expensey REST endpoints.
  */
 @Path("/data")
-public class ExpenseyRsrc {
-	final static private Logger logger = LoggerFactory.getLogger(ExpenseyRsrc.class);
+public class ExpenseyRest
+{
+	final static private Logger logger = LoggerFactory.getLogger(ExpenseyRest.class);
 
-	protected final Configuration config;
 	protected final AuthenticationService authService;
+	protected final Configuration config;
+	protected final ExpenseService expenseService;
 
 	@Inject
-	public ExpenseyRsrc(Configuration config, AuthenticationService authService) {
+	public ExpenseyRest(Configuration config, AuthenticationService authService, ExpenseService expenseService)
+	{
 		this.config = config;
 		this.authService = authService;
+		this.expenseService = expenseService;
 
 		logger.info("ExpenseyRsrc()");
 	}
@@ -72,18 +79,18 @@ public class ExpenseyRsrc {
 	 * @return The array of Strings making up the hello.
 	 */
 	@GET
-	@Path("/path/{id : \\d+}")
+	@Path("/hello/{id : \\d+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<String> getPathId(@PathParam("id") Long id, //
 			@CookieParam(AuthenticationService.TOKEN) String authenticationToken, //
-			@Context HttpServletRequest req) {
-
+			@Context HttpServletRequest req)
+	{
 		// authenticate based on the cookie delivered token
-		Optional<Authentication> authentication = this.authService.authenticateByToken(authenticationToken, req);
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
 		if (!authentication.isPresent())
 			return null;
 
-		// do other security checks before satisfying the request
+		// TODO: do other security checks before satisfying the request
 
 		List<String> rv = new ArrayList<>();
 
@@ -94,6 +101,40 @@ public class ExpenseyRsrc {
 		rv.add("!");
 
 		return rv;
+	}
+
+	/**
+	 * Post a new expense.
+	 * 
+	 * @param authenticationToken
+	 * @param req
+	 * @param expense
+	 *            The expense to post.
+	 * @return The expense posted.
+	 */
+	@POST
+	@Path("/expenses")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Expense postExpense( //
+			@CookieParam(AuthenticationService.TOKEN) String authenticationToken, //
+			@Context HttpServletRequest req, //
+			Expense expense)
+	{
+		// authenticate based on the cookie delivered token
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
+		if (!authentication.isPresent())
+			return null;
+
+		// TODO: do other security checks before satisfying the request
+
+		Optional<Expense> added = expenseService.addExpense(expense.getAmount(), expense.getDate(), expense.getDescription(), expense.getUserId());
+		if (!added.isPresent())
+		{
+			return null;
+		}
+
+		return added.get();
 	}
 
 	/**
@@ -109,14 +150,16 @@ public class ExpenseyRsrc {
 	 */
 	@POST
 	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postLogin( //
 			@HeaderParam("user-agent") String userAgent, //
 			@Context HttpServletRequest req, //
-			Credentials credentials) {
-
+			Credentials credentials)
+	{
 		// authenticate these credentials - records the authentication if successful
-		Optional<Authentication> auth = this.authService.authenticateByCredentials(credentials, req.getRemoteAddr());
-		if (!auth.isPresent()) {
+		Optional<Authentication> auth = authService.authenticateByCredentials(credentials, req == null ? "" : req.getRemoteAddr());
+		if (!auth.isPresent())
+		{
 			return Response.status(Status.FORBIDDEN).build();
 		}
 

@@ -16,25 +16,35 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
-
-import java.util.Date;
-
-import org.ggolden.expensey.auth.model.Authentication;
-import org.ggolden.expensey.test.ModelTest;
-
-public class AuthenticationTest extends ModelTest<Authentication>
+(function()
 {
-	@Override
-	protected String getFixtureName()
+	// add the "Login" controller to the module
+	angular.module("Expensey").controller("Login", Login);
+
+	// the Login controller function
+	function Login($log, $http, $q, $location)
 	{
-		return "fixtures/auth.json";
+		// refer to the controller as 'ctrl', matching how we refer to it in the html
+		var ctrl = this;
+
+		ctrl.invalidCredentials = invalidCredentials;
+		ctrl.login = login;
+
+		ctrl.password = "";
+		ctrl.email = "";
+
+		/** ******************************************************************************************************** */
+
+		function invalidCredentials()
+		{
+			return ((ctrl.email.trim().length == 0) || (ctrl.password.trim().length == 0));
+		}
+
+		function login()
+		{
+			$log.log("login", ctrl.email);
+			$location.path("/nutshells");
+		}
 	}
 
-	@Override
-	protected Authentication mockObjectAsFixture()
-	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
-		return auth;
-	}
-}
+})();

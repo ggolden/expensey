@@ -16,7 +16,7 @@
  *
  **********************************************************************************/
 
-package org.ggolden.expensey.auth;
+package org.ggolden.expensey.test;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -27,8 +27,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.FixtureHelpers;
 
-public abstract class ModelTest<T> {
-
+public abstract class ModelTest<T>
+{
 	protected static final ObjectMapper MAPPER = Jackson.newObjectMapper().registerModule(new Jdk8Module());
 
 	/**
@@ -37,7 +37,8 @@ public abstract class ModelTest<T> {
 	 * @throws Exception
 	 */
 	@Test
-	public void modelFromJSON() throws Exception {
+	public void modelFromJSON() throws Exception
+	{
 		final T o = mockObjectAsFixture();
 		Assertions.assertThat(MAPPER.readValue(FixtureHelpers.fixture(getFixtureName()), o.getClass())).isEqualTo(o);
 	}
@@ -48,7 +49,8 @@ public abstract class ModelTest<T> {
 	 * @throws Exception
 	 */
 	@Test
-	public void modelToJSON() throws Exception {
+	public void modelToJSON() throws Exception
+	{
 		final T o = mockObjectAsFixture();
 		final String json = MAPPER.writeValueAsString(o);
 		final String expected = MAPPER.writeValueAsString(MAPPER.readValue(FixtureHelpers.fixture(getFixtureName()), o.getClass()));
