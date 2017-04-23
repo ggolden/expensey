@@ -20,9 +20,11 @@ package org.ggolden.expensey.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -75,6 +77,20 @@ public class SimpleExpenseService implements ExpenseService
 		// create the expense
 		Expense ex = new Expense(id, amount, date, description, userId);
 
+		// remember it
+		expenses.put(ex.get_id(), ex);
+
 		return Optional.of(ex);
+	}
+
+	@Override
+	public List<Expense> getExpensesForUser(String user)
+	{
+		// the expenses for this user
+		List<Expense> rv = expenses.values().stream() //
+				.filter(e -> e.getUserId().equals(user)) //
+				.collect(Collectors.toList());
+
+		return rv;
 	}
 }

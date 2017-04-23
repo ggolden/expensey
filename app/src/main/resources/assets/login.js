@@ -52,7 +52,7 @@
 				success : function()
 				{
 					// switch to the next view
-					$location.path("/nutshells");
+					$location.path("/expenses");
 				},
 				failure : function()
 				{

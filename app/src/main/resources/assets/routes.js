@@ -22,10 +22,10 @@
 
 	function Routes($routeProvider)
 	{
-		$routeProvider.when("/nutshells",
+		$routeProvider.when("/expenses",
 		{
-			templateUrl : "/nutshells.html",
-			controller : "Nutshells",
+			templateUrl : "/expenses.html",
+			controller : "Expenses",
 			controllerAs : "ctrl"
 		})
 

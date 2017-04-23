@@ -83,6 +83,11 @@ public class ExpenseyRestTest
 		// setup expenseService
 		Mockito.when(expenseService.addExpense(Mockito.anyFloat(), Mockito.any(Date.class), Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(Optional.of(expense));
+
+		List<Expense> expenses = new ArrayList<>();
+		expenses.add(expense);
+		expenses.add(expense);
+		Mockito.when(expenseService.getExpensesForUser(Mockito.anyString())).thenReturn(expenses);
 	}
 
 	/**
@@ -150,5 +155,25 @@ public class ExpenseyRestTest
 		Assertions.assertThat(value).isNotEmpty();
 		Assertions.assertThat(value).hasSize(4);
 		Assertions.assertThat(value).contains("Hello", "Gigsters", "(1)", "!");
+	}
+
+	/**
+	 * test the "/expenses path
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testExpenses()
+	{
+		List<String> rv = new ArrayList<>();
+
+		// token not valid
+		List<Expense> value = z_rest.client().target("/data/expenses").request().cookie(AuthenticationService.TOKEN, "auth").get(rv.getClass());
+		Assertions.assertThat(value).isNull();
+
+		// token is valid
+		value = z_rest.client().target("/data/expenses").request().cookie(AuthenticationService.TOKEN, "authorized").get(rv.getClass());
+		Assertions.assertThat(value).isNotNull();
+		Assertions.assertThat(value).isNotEmpty();
+		Assertions.assertThat(value).hasSize(2);
 	}
 }

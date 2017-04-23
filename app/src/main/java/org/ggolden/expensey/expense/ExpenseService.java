@@ -19,6 +19,7 @@
 package org.ggolden.expensey.expense;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.ggolden.expensey.expense.model.Expense;
@@ -41,4 +42,13 @@ public interface ExpenseService
 	 * @return The recorded expense, or not if any fields are missing or invalid.
 	 */
 	Optional<Expense> addExpense(Float amount, Date date, String description, String userId);
+
+	/**
+	 * Get all the expenses for this user.
+	 * 
+	 * @param user
+	 *            The user ID.
+	 * @return The List of Expense, possibly empty.
+	 */
+	List<Expense> getExpensesForUser(String user);
 }

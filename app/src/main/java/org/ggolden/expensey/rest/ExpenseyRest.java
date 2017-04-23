@@ -69,6 +69,26 @@ public class ExpenseyRest
 		logger.info("ExpenseyRsrc()");
 	}
 
+	@GET
+	@Path("/expenses")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Expense> getExpenses( //
+			@CookieParam(AuthenticationService.TOKEN) String authenticationToken, //
+			@Context HttpServletRequest req)
+	{
+		// authenticate based on the cookie delivered token
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
+		if (!authentication.isPresent())
+			return null;
+
+		// TODO: do other security checks before satisfying the request
+
+		// get the expenses for this user
+		List<Expense> rv = expenseService.getExpensesForUser(authentication.get().getUser());
+
+		return rv;
+	}
+
 	/**
 	 * Get the hello.
 	 * 
@@ -128,7 +148,8 @@ public class ExpenseyRest
 
 		// TODO: do other security checks before satisfying the request
 
-		Optional<Expense> added = expenseService.addExpense(expense.getAmount(), expense.getDate(), expense.getDescription(), expense.getUserId());
+		// add the expense for the authenticated user
+		Optional<Expense> added = expenseService.addExpense(expense.getAmount(), expense.getDate(), expense.getDescription(), authentication.get().getUser());
 		if (!added.isPresent())
 		{
 			return null;
