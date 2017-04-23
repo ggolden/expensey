@@ -26,7 +26,8 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.ggolden.expensey.expense.model.Expense;
-import org.ggolden.expensey.impl.SimpleExpenseService;
+import org.ggolden.expensey.impl.ExpenseServiceImpl;
+import org.ggolden.expensey.impl.ExpenseStorageMem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import org.junit.Test;
 public class ExpenseServiceTest
 {
 	// the service
-	private static final ExpenseService service = new SimpleExpenseService();
+	private static final ExpenseService service = new ExpenseServiceImpl(new ExpenseStorageMem());
 
 	protected static final String USER = "user@mac.com";
 	protected static final String USER_2 = "user@gmail.com";

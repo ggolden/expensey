@@ -22,19 +22,25 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
 import org.ggolden.expensey.auth.AuthenticationService;
-import org.ggolden.expensey.auth.impl.SimpleAuthService;
+import org.ggolden.expensey.auth.impl.AuthenticationServiceImpl;
+import org.ggolden.expensey.db.Transactor;
 import org.ggolden.expensey.expense.ExpenseService;
-import org.ggolden.expensey.impl.SimpleExpenseService;
+import org.ggolden.expensey.expense.ExpenseStorage;
+import org.ggolden.expensey.impl.ExpenseServiceImpl;
+import org.ggolden.expensey.impl.ExpenseStorageMem;
 import org.ggolden.expensey.rest.ExpenseyRest;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -70,18 +76,16 @@ public class Application extends io.dropwizard.Application<Configuration>
 	{
 		logger.info("run: configuration:" + configuration);
 
-		// environment.lifecycle().manage(new NotifyManager(configuration.getHostname(), configuration.getAuth().getVersion()));
+		// create our db connection, and make it available for injection into services
+		DataSourceFactory database = new DataSourceFactory();
+		database.setDriverClass("org.h2.Driver");
+		database.setUrl("jdbc:h2:file:~/expensey;mode=mysql");
+		database.setUser("u");
+		database.setPassword("p");
+		DBI dbi = new DBIFactory().build(environment, database, "db");
 
-		// // create our db connection, and make it available for injection into services
-		// DataSourceFactory database = new DataSourceFactory();
-		// database.setDriverClass("org.h2.Driver");
-		// database.setUrl("jdbc:h2:mem:apps;mode=mysql");
-		// database.setUser("u");
-		// database.setPassword("p");
-		// DBI dbi = new DBIFactory().build(environment, database, "db");
-
-		// our wrapper around the dbi
-		// DB db = new DB(dbi, autoDDL);
+		// our wrapper around the dbi for transactions
+		Transactor transactor = new Transactor(dbi);
 
 		// add our services, etc. to the component system
 		environment.jersey().register(new AbstractBinder()
@@ -89,26 +93,21 @@ public class Application extends io.dropwizard.Application<Configuration>
 			@Override
 			protected void configure()
 			{
-
 				// make the configuration available
 				bind(configuration).to(Configuration.class);
 
-				// bind the DBI and DB
-				// bind(dbi).to(DBI.class);
-				// bind(db).to(DB.class);
+				// bind the DBI and Transactor
+				bind(dbi).to(DBI.class);
+				bind(transactor).to(Transactor.class);
 
 				// make our services available for injection - as singletons
 
 				// authentication
-				bind(SimpleAuthService.class).to(AuthenticationService.class).in(Singleton.class);
+				bind(AuthenticationServiceImpl.class).to(AuthenticationService.class).in(Singleton.class);
 
-				// expenses
-				bind(SimpleExpenseService.class).to(ExpenseService.class).in(Singleton.class);
-
-				// // user & data
-				// bind(configuration.getUser()).to(UserConfiguration.class);
-				// bind(UserDataJDBIImpl.class).to(UserData.class).in(Singleton.class);
-				// bind(UserServiceImpl.class).to(UserService.class).in(Singleton.class);
+				// expenses - using the test/mem storage
+				bind(ExpenseStorageMem.class).to(ExpenseStorage.class).in(Singleton.class);
+				bind(ExpenseServiceImpl.class).to(ExpenseService.class).in(Singleton.class);
 
 				// make our resources singleton
 				bind(ExpenseyRest.class).to(ExpenseyRest.class).in(Singleton.class);

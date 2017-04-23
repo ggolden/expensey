@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  **********************************************************************************/
-
 package org.ggolden.expensey.impl;
 
 import java.util.Date;
@@ -26,51 +25,23 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-import org.ggolden.expensey.expense.ExpenseService;
+import org.ggolden.expensey.expense.ExpenseStorage;
 import org.ggolden.expensey.expense.model.Expense;
-import org.jvnet.hk2.annotations.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A simple implementation of the ExpenseService.
- * 
- * In a real service,
- * 
- * - the expenses would be persisted in a database
+ * Memory (test) bases storage for Expense
  */
-@Service
-public class SimpleExpenseService implements ExpenseService
+public class ExpenseStorageMem implements ExpenseStorage
 {
-	final static private Logger logger = LoggerFactory.getLogger(SimpleExpenseService.class);
-
 	/** To generate the next expense id. TODO: usually this would be done by the database with an autoincrement column. */
 	protected AtomicInteger nextId = new AtomicInteger(1);
 
 	/** authentications: mapped by token to the Authentication */
 	Map<String, Expense> expenses = new HashMap<>();
 
-	/**
-	 * Create the expense service
-	 */
-	@Inject
-	public SimpleExpenseService()
-	{
-		// this.userService = userService;
-		logger.info("SimpleExpenseService()");
-	}
-
 	@Override
-	public Optional<Expense> addExpense(Float amount, Date date, String description, String userId)
+	public Optional<Expense> createExpense(Float amount, Date date, String description, String userId)
 	{
-		// TODO: validate the fields
-		if ((date == null) || (description == null) || (userId == null))
-		{
-			return Optional.empty();
-		}
-
 		// generate a new ID
 		String id = Integer.toString(nextId.getAndIncrement());
 
@@ -84,7 +55,21 @@ public class SimpleExpenseService implements ExpenseService
 	}
 
 	@Override
-	public List<Expense> getExpensesForUser(String user)
+	public void deleteExpense(Expense expense)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Optional<Expense> readExpense(String id)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Expense> readExpensesForUser(String user)
 	{
 		// the expenses for this user
 		List<Expense> rv = expenses.values().stream() //
@@ -92,5 +77,12 @@ public class SimpleExpenseService implements ExpenseService
 				.collect(Collectors.toList());
 
 		return rv;
+	}
+
+	@Override
+	public void updateExpense(Expense expense)
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

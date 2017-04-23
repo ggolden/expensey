@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * - the authentications would be logged, probably to a database, for user access and usage tracking
  */
 @Service
-public class SimpleAuthService implements AuthenticationService
+public class AuthenticationServiceImpl implements AuthenticationService
 {
-	final static private Logger logger = LoggerFactory.getLogger(SimpleAuthService.class);
+	final static private Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
 	/** To generate the next authentication id. TODO: usually this would be done by the database with an auto-increment column. */
 	protected AtomicInteger nextId = new AtomicInteger(1);
@@ -68,7 +68,7 @@ public class SimpleAuthService implements AuthenticationService
 	 *            The configuration
 	 */
 	@Inject
-	public SimpleAuthService(/* UserService userService */)
+	public AuthenticationServiceImpl(/* UserService userService */)
 	{
 		// this.userService = userService;
 		logger.info("SimpleAuthService()");

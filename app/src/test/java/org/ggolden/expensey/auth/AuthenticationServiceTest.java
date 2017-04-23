@@ -21,7 +21,7 @@ package org.ggolden.expensey.auth;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.ggolden.expensey.auth.impl.SimpleAuthService;
+import org.ggolden.expensey.auth.impl.AuthenticationServiceImpl;
 import org.ggolden.expensey.auth.model.Authentication;
 import org.ggolden.expensey.auth.model.Credentials;
 import org.junit.After;
@@ -34,7 +34,7 @@ import org.junit.Test;
 public class AuthenticationServiceTest
 {
 	// the service
-	private static final AuthenticationService service = new SimpleAuthService();
+	private static final AuthenticationService service = new AuthenticationServiceImpl();
 
 	/**
 	 * Setup each test.
