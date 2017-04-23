@@ -18,7 +18,7 @@
 	angular.module("Expensey").controller("Expenses", Expenses);
 
 	// the Expenses controller function
-	function Expenses($log, $http, $q)
+	function Expenses($log, $http, $q, $location)
 	{
 		// refer to the controller as 'ctrl', matching how we refer to it in the html
 		var ctrl = this;
@@ -30,16 +30,17 @@
 		ctrl.expenses = [];
 		ctrl.noExpenses = false;
 
-		ctrl.expense =
-		{
-			id : null,
-			amount : 0,
-			date : 0,
-			description : "",
-			userId : ""
-		}
+		ctrl.expense = newExpense();
+		ctrl.adding = false;
 
 		ctrl.addExpense = addExpense;
+		ctrl.invalidExpense = invalidExpense;
+		ctrl.logout = logout;
+
+		ctrl.datePickerFormat = "MMM dd, yyyy";
+		ctrl.datePickerOpen = false;
+
+		ctrl.loading = false;
 
 		/** ******************************************************************************************************** */
 
@@ -153,11 +154,11 @@
 				},
 				before : function()
 				{
-
+					ctrl.loading = true;
 				},
 				after : function()
 				{
-
+					ctrl.loading = false;
 				}
 			});
 		}
@@ -180,6 +181,57 @@
 		function addExpense()
 		{
 			$log.log("addExpense", ctrl.expense);
+			post_expense(ctrl.expense,
+			{
+				success : function(data)
+				{
+					ctrl.expense = newExpense();
+					load();
+				},
+				failure : function()
+				{
+					$log.log("failure");
+				},
+				before : function()
+				{
+					ctrl.adding = true;
+					ctrl.loading = true;
+				},
+				after : function()
+				{
+					ctrl.adding = false;
+					ctrl.loading = false;
+				}
+			});
+		}
+
+		function invalidExpense()
+		{
+			return ((ctrl.expense.amount == null) || //
+			(ctrl.expense.date == null) || //
+			(ctrl.expense.description == null));
+		}
+
+		function newExpense()
+		{
+			var rv =
+			{
+				id : null,
+				amount : null,
+				date : new Date(),
+				description : null,
+				userId : null
+			}
+
+			return rv;
+		}
+
+		function logout()
+		{
+			// TODO: logout on the server
+
+			$location.replace();
+			$location.path("/login");
 		}
 
 		load();

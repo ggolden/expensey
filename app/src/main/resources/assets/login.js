@@ -52,6 +52,7 @@
 				success : function()
 				{
 					// switch to the next view
+					$location.replace();
 					$location.path("/expenses");
 				},
 				failure : function()
