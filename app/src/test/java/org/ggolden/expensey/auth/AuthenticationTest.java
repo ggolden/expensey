@@ -34,7 +34,7 @@ public class AuthenticationTest extends ModelTest<Authentication>
 	@Override
 	protected Authentication mockObjectAsFixture()
 	{
-		final Authentication auth = new Authentication("ID", new Date(1L), "IP", "USER");
+		final Authentication auth = new Authentication("ID", new Date(1L), "USER");
 		return auth;
 	}
 }

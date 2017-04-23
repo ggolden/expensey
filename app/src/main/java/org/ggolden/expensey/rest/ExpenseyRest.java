@@ -77,7 +77,7 @@ public class ExpenseyRest
 			@Context HttpServletRequest req)
 	{
 		// authenticate based on the cookie delivered token
-		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken);
 		if (!authentication.isPresent())
 			return null;
 
@@ -106,7 +106,7 @@ public class ExpenseyRest
 			@Context HttpServletRequest req)
 	{
 		// authenticate based on the cookie delivered token
-		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken);
 		if (!authentication.isPresent())
 			return null;
 
@@ -142,7 +142,7 @@ public class ExpenseyRest
 			Expense expense)
 	{
 		// authenticate based on the cookie delivered token
-		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken, req == null ? "" : req.getRemoteAddr());
+		Optional<Authentication> authentication = authService.authenticateByToken(authenticationToken);
 		if (!authentication.isPresent())
 			return null;
 
@@ -178,7 +178,7 @@ public class ExpenseyRest
 			Credentials credentials)
 	{
 		// authenticate these credentials - records the authentication if successful
-		Optional<Authentication> auth = authService.authenticateByCredentials(credentials, req == null ? "" : req.getRemoteAddr());
+		Optional<Authentication> auth = authService.authenticateByCredentials(credentials);
 		if (!auth.isPresent())
 		{
 			return Response.status(Status.FORBIDDEN).build();

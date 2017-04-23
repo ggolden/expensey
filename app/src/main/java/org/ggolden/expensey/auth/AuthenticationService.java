@@ -35,22 +35,18 @@ public interface AuthenticationService
 	 * 
 	 * @param credentials
 	 *            The authentication credentials (user id, password).
-	 * @param ipAddress
-	 *            The originating IP address, which may be used for further authentication requests.
 	 * @return The Authentication if authenticated, or not.
 	 */
-	Optional<Authentication> authenticateByCredentials(Credentials credentials, String ipAddress);
+	Optional<Authentication> authenticateByCredentials(Credentials credentials);
 
 	/**
-	 * Authenticate by token. This must match the IP address of the initial authentication
+	 * Authenticate by token.
 	 * 
 	 * @param token
 	 *            The authentication token.
-	 * @param fromIpAddress
-	 *            The IP address of the request being authenticated (such as from HttpServletRequest.getRemoteAddr()).
 	 * @return The Authentication if found and valid, or not.
 	 */
-	Optional<Authentication> authenticateByToken(String token, String fromIpAddress);
+	Optional<Authentication> authenticateByToken(String token);
 
 	/**
 	 * Change a user's password. The user must already be authenticated.
@@ -68,11 +64,9 @@ public interface AuthenticationService
 	 * 
 	 * @param credentials
 	 *            The new user's credentials.
-	 * @param ipAddress
-	 *            The originating IP address, which may be used for further authentication requests.
 	 * @return The authentication, or not. May fail if the user ID in the credentials is already known, or the PW is insufficiently secure.
 	 */
-	Optional<Authentication> registerUser(Credentials credentials, String ipAddress);
+	Optional<Authentication> registerUser(Credentials credentials);
 
 	/**
 	 * End the validity of this authentication, so that it cannot be used to authentication (token).

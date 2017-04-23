@@ -41,9 +41,6 @@ public class Authentication
 	/** Date authenticated. */
 	protected Date date;
 
-	/** Originating IP address. */
-	protected String ipAddress;
-
 	/** The authenticated user. */
 	protected String user;
 }

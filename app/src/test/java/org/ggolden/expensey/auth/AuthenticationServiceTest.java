@@ -36,9 +36,6 @@ public class AuthenticationServiceTest
 	// the service
 	private static final AuthenticationService service = new SimpleAuthService();
 
-	protected static final String IP = "127.0.0.1";
-	protected static final String IP2 = "127.0.0.2";
-
 	/**
 	 * Setup each test.
 	 */
@@ -59,17 +56,17 @@ public class AuthenticationServiceTest
 	public void test()
 	{
 		// authenticate as an unknown user
-		Optional<Authentication> auth = service.authenticateByCredentials(new Credentials("Welcome1234", "user@mac.com"), IP);
+		Optional<Authentication> auth = service.authenticateByCredentials(new Credentials("Welcome1234", "user@mac.com"));
 		Assertions.assertThat(auth).isEmpty();
 
-		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user2@mac.com"), IP);
+		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user2@mac.com"));
 		Assertions.assertThat(auth).isEmpty();
 
 		// authenticate as a known user
-		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@mac.com"), IP);
+		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@mac.com"));
 		Assertions.assertThat(auth).isNotEmpty();
 
-		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@gmail.com"), IP);
+		auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@gmail.com"));
 		Assertions.assertThat(auth).isNotEmpty();
 	}
 
@@ -80,37 +77,37 @@ public class AuthenticationServiceTest
 		Credentials newCredentials = new Credentials("Welcome123", "user@icloud.com");
 
 		// verify it is not already registered
-		Optional<Authentication> auth = service.authenticateByCredentials(newCredentials, IP);
+		Optional<Authentication> auth = service.authenticateByCredentials(newCredentials);
 		Assertions.assertThat(auth).isEmpty();
 
 		// register it
-		auth = service.registerUser(newCredentials, IP);
+		auth = service.registerUser(newCredentials);
 		Assertions.assertThat(auth).isNotEmpty();
 
 		// verify it can then authenticate
-		auth = service.authenticateByCredentials(newCredentials, IP);
+		auth = service.authenticateByCredentials(newCredentials);
 		Assertions.assertThat(auth).isNotEmpty();
 
 		// verify the password is working
-		auth = service.authenticateByCredentials(new Credentials("Welcome1234", newCredentials.getUserId()), IP);
+		auth = service.authenticateByCredentials(new Credentials("Welcome1234", newCredentials.getUserId()));
 		Assertions.assertThat(auth).isEmpty();
 
 		// verify we cannot register another with the same user ID
-		auth = service.registerUser(newCredentials, IP);
+		auth = service.registerUser(newCredentials);
 		Assertions.assertThat(auth).isEmpty();
 
 		// remove the user
 		service.removeUser(newCredentials.getUserId());
 
 		// verify that authentication is no longer possible
-		auth = service.authenticateByCredentials(newCredentials, IP);
+		auth = service.authenticateByCredentials(newCredentials);
 		Assertions.assertThat(auth).isEmpty();
 
 		// verify that we can now re-register with this id
 		newCredentials.setPassword("Welcome321");
-		auth = service.registerUser(newCredentials, IP);
+		auth = service.registerUser(newCredentials);
 		Assertions.assertThat(auth).isNotEmpty();
-		auth = service.authenticateByCredentials(newCredentials, IP);
+		auth = service.authenticateByCredentials(newCredentials);
 		Assertions.assertThat(auth).isNotEmpty();
 	}
 
@@ -118,29 +115,25 @@ public class AuthenticationServiceTest
 	public void testTokens()
 	{
 		// authenticate
-		Optional<Authentication> auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@mac.com"), IP);
+		Optional<Authentication> auth = service.authenticateByCredentials(new Credentials("Welcome123", "user@mac.com"));
 		Assertions.assertThat(auth).isNotEmpty();
 
 		// connect to the authentication by token
-		Optional<Authentication> auth2 = service.authenticateByToken(auth.get().get_id(), IP);
+		Optional<Authentication> auth2 = service.authenticateByToken(auth.get().get_id());
 		Assertions.assertThat(auth2).isNotEmpty();
 
 		// verify that we get back the same auth
 		Assertions.assertThat(auth2.get()).isEqualTo(auth.get());
 
-		// verify that the IP is being checked
-		auth2 = service.authenticateByToken(auth.get().get_id(), IP2);
-		Assertions.assertThat(auth2).isEmpty();
-
 		// verify the token is being checked
-		auth2 = service.authenticateByToken("10000", IP);
+		auth2 = service.authenticateByToken("10000");
 		Assertions.assertThat(auth2).isEmpty();
 
 		// remove the auth
 		service.removeAuthentication(auth.get());
 
 		// verify it cannot be used to authenticate
-		auth2 = service.authenticateByToken(auth.get().get_id(), IP);
+		auth2 = service.authenticateByToken(auth.get().get_id());
 		Assertions.assertThat(auth2).isEmpty();
 	}
 }

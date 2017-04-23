@@ -52,7 +52,7 @@ public class SimpleAuthService implements AuthenticationService
 {
 	final static private Logger logger = LoggerFactory.getLogger(SimpleAuthService.class);
 
-	/** To generate the next authentication id. TODO: usually this would be done by the database with an autoincrement column. */
+	/** To generate the next authentication id. TODO: usually this would be done by the database with an auto-increment column. */
 	protected AtomicInteger nextId = new AtomicInteger(1);
 
 	/** authentications: mapped by token to the Authentication */
@@ -79,7 +79,7 @@ public class SimpleAuthService implements AuthenticationService
 	}
 
 	@Override
-	public Optional<Authentication> authenticateByCredentials(Credentials credentials, String ipAddress)
+	public Optional<Authentication> authenticateByCredentials(Credentials credentials)
 	{
 		// check credentials
 		int foundAt = this.credentials.indexOf(credentials);
@@ -96,7 +96,7 @@ public class SimpleAuthService implements AuthenticationService
 		String id = Integer.toString(this.nextId.getAndIncrement());
 
 		// create and record the authentication
-		Authentication auth = new Authentication(id, new Date(), ipAddress, found.getUserId());
+		Authentication auth = new Authentication(id, new Date(), found.getUserId());
 		this.auths.put(id, auth);
 
 		// return the authentication
@@ -104,16 +104,11 @@ public class SimpleAuthService implements AuthenticationService
 	}
 
 	@Override
-	public Optional<Authentication> authenticateByToken(String token, String fromIpAddress)
+	public Optional<Authentication> authenticateByToken(String token)
 	{
 		// check that the token is to a valid authentication
 		Authentication auth = this.auths.get(token);
 		if (auth == null)
-		{
-			return Optional.empty();
-		}
-		// further check that the IP address is the same as when the authentication was created
-		if (!auth.getIpAddress().equals(fromIpAddress))
 		{
 			return Optional.empty();
 		}
@@ -153,7 +148,7 @@ public class SimpleAuthService implements AuthenticationService
 	}
 
 	@Override
-	public Optional<Authentication> registerUser(Credentials credentials, String ipAddress)
+	public Optional<Authentication> registerUser(Credentials credentials)
 	{
 		// validate that the user ID has not already been registered
 		Optional<Credentials> found = this.credentials.stream().filter(c -> c.getUserId().equals(credentials.getUserId())).findFirst();
@@ -168,7 +163,7 @@ public class SimpleAuthService implements AuthenticationService
 		this.credentials.add(credentials);
 
 		// return the authentication
-		return this.authenticateByCredentials(credentials, ipAddress);
+		return this.authenticateByCredentials(credentials);
 	}
 
 	@Override

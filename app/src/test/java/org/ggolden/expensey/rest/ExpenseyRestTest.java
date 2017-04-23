@@ -74,11 +74,11 @@ public class ExpenseyRestTest
 	public void setup()
 	{
 		// setup authenticationService
-		Authentication auth = new Authentication("id", new Date(), "ip", "user");
-		Mockito.when(authenticationService.authenticateByToken(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
-		Mockito.when(authenticationService.authenticateByToken(Mockito.eq("authorized"), Mockito.anyString())).thenReturn(Optional.of(auth));
-		Mockito.when(authenticationService.authenticateByCredentials(Mockito.eq(credentials_good), Mockito.anyString())).thenReturn(Optional.of(auth));
-		Mockito.when(authenticationService.authenticateByCredentials(Mockito.eq(credentials_bad), Mockito.anyString())).thenReturn(Optional.empty());
+		Authentication auth = new Authentication("id", new Date(), "user");
+		Mockito.when(authenticationService.authenticateByToken(Mockito.anyString())).thenReturn(Optional.empty());
+		Mockito.when(authenticationService.authenticateByToken(Mockito.eq("authorized"))).thenReturn(Optional.of(auth));
+		Mockito.when(authenticationService.authenticateByCredentials(Mockito.eq(credentials_good))).thenReturn(Optional.of(auth));
+		Mockito.when(authenticationService.authenticateByCredentials(Mockito.eq(credentials_bad))).thenReturn(Optional.empty());
 
 		// setup expenseService
 		Mockito.when(expenseService.addExpense(Mockito.anyFloat(), Mockito.any(Date.class), Mockito.anyString(), Mockito.anyString()))
