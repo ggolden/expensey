@@ -13,8 +13,7 @@
    limitations under the License. -->
 
 <style>
-body
-{
+body {
 	background: url('/earth.jpg') no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -22,8 +21,7 @@ body
 	background-size: cover;
 }
 
-.vertical-center
-{
+.vertical-center {
 	min-height: 100%;
 	min-height: 100vh;
 	display: -webkit-box;
@@ -43,6 +41,15 @@ body
 	justify-content: center;
 }
 </style>
+
+<div class="navbar navbar-default navbar-fixed-top" style="opacity: 0.75;">
+	<div class="jumbotron text-center" style="margin-bottom: 0px;">
+		<div class="container">
+			<h1>Expensey</h1>
+			<p>Your Expense Tracker</p>
+		</div>
+	</div>
+</div>
 
 <div id="login" class="container vertical-center">
 	<div class="row">
@@ -69,14 +76,16 @@ body
 						</div>
 						<div class="form-group" style="margin-bottom: 0px;">
 							<div class="col-sm-offset-3 col-sm-9">
-								<button type="submit" class="btn btn-success btn-sm" data-ng-disabled="ctrl.invalidCredentials()" data-ng-click="ctrl.login()">
+								<button type="submit" class="btn btn-success btn-sm" data-ng-disabled="ctrl.invalidCredentials() || ctrl.loggingIn" data-ng-click="ctrl.login()">
 									<span class="glyphicon glyphicon-log-in" style="margin-right: 8px;"></span>Log in
 								</button>
 							</div>
 						</div>
 					</form>
 				</div>
-				<div class="panel-footer"></div>
+				<div class="panel-footer">
+					<div class="alert alert-danger" role="alert" data-ng-show="ctrl.invalidLogin" style="margin-bottom: 0px;"">Invalid email or password.</div>
+				</div>
 			</div>
 		</div>
 	</div>
