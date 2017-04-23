@@ -59,6 +59,16 @@ public class Transactor
 		void accept(T t) throws DBIException;
 	}
 
+	/**
+	 * A way to hold and update a value that can be made final and used in a lambda.
+	 * 
+	 * @param <T>
+	 */
+	public static class Holder<T>
+	{
+		public Optional<T> value = Optional.empty();
+	}
+
 	final static private Logger logger = LoggerFactory.getLogger(Transactor.class);
 
 	/** How many retries we attempt before giving up, in transact(), in case of db down or SQLException deadlock. */

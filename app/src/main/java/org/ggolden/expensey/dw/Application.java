@@ -28,6 +28,7 @@ import org.ggolden.expensey.expense.ExpenseService;
 import org.ggolden.expensey.expense.ExpenseStorage;
 import org.ggolden.expensey.impl.ExpenseServiceImpl;
 import org.ggolden.expensey.impl.ExpenseStorageMem;
+import org.ggolden.expensey.impl.ExpenseStorageSql;
 import org.ggolden.expensey.rest.ExpenseyRest;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -77,6 +78,7 @@ public class Application extends io.dropwizard.Application<Configuration>
 		logger.info("run: configuration:" + configuration);
 
 		// create our db connection, and make it available for injection into services
+		// TODO: this is for test, with a file based H2 db
 		DataSourceFactory database = new DataSourceFactory();
 		database.setDriverClass("org.h2.Driver");
 		database.setUrl("jdbc:h2:file:~/expensey;mode=mysql");
@@ -106,7 +108,10 @@ public class Application extends io.dropwizard.Application<Configuration>
 				bind(AuthenticationServiceImpl.class).to(AuthenticationService.class).in(Singleton.class);
 
 				// expenses - using the test/mem storage
-				bind(ExpenseStorageMem.class).to(ExpenseStorage.class).in(Singleton.class);
+				// bind(ExpenseStorageMem.class).to(ExpenseStorage.class).in(Singleton.class);
+				
+				// expenses - using the sql storage
+				bind(ExpenseStorageSql.class).to(ExpenseStorage.class).in(Singleton.class);
 				bind(ExpenseServiceImpl.class).to(ExpenseService.class).in(Singleton.class);
 
 				// make our resources singleton
