@@ -31,6 +31,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Configuration extends io.dropwizard.Configuration
 {
+	protected String db = null;
+
 	@NotEmpty
 	protected String environment = null;
 }

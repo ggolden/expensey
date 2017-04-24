@@ -27,7 +27,6 @@ import org.ggolden.expensey.db.Transactor;
 import org.ggolden.expensey.expense.ExpenseService;
 import org.ggolden.expensey.expense.ExpenseStorage;
 import org.ggolden.expensey.impl.ExpenseServiceImpl;
-import org.ggolden.expensey.impl.ExpenseStorageMem;
 import org.ggolden.expensey.impl.ExpenseStorageSql;
 import org.ggolden.expensey.rest.ExpenseyRest;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -40,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
@@ -68,6 +69,10 @@ public class Application extends io.dropwizard.Application<Configuration>
 		// see: https://github.com/FasterXML/jackson-datatype-jdk8
 		bootstrap.getObjectMapper().registerModule(new Jdk8Module());
 
+		// enable configuration values like ${ENV_VAR} and ${ENV_VAR:-default value}
+		bootstrap.setConfigurationSourceProvider(
+				new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
+
 		// serve our static assets from /, serving "index.html" as the default
 		bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
 	}
@@ -77,11 +82,14 @@ public class Application extends io.dropwizard.Application<Configuration>
 	{
 		logger.info("run: configuration:" + configuration);
 
+		// get the db url from config
+		String dbUrl = "jdbc:h2:" + configuration.getDb() + ";mode=mysql";
+
 		// create our db connection, and make it available for injection into services
 		// TODO: this is for test, with a file based H2 db
 		DataSourceFactory database = new DataSourceFactory();
 		database.setDriverClass("org.h2.Driver");
-		database.setUrl("jdbc:h2:file:~/expensey;mode=mysql");
+		database.setUrl(dbUrl);
 		database.setUser("u");
 		database.setPassword("p");
 		DBI dbi = new DBIFactory().build(environment, database, "db");
@@ -109,7 +117,7 @@ public class Application extends io.dropwizard.Application<Configuration>
 
 				// expenses - using the test/mem storage
 				// bind(ExpenseStorageMem.class).to(ExpenseStorage.class).in(Singleton.class);
-				
+
 				// expenses - using the sql storage
 				bind(ExpenseStorageSql.class).to(ExpenseStorage.class).in(Singleton.class);
 				bind(ExpenseServiceImpl.class).to(ExpenseService.class).in(Singleton.class);

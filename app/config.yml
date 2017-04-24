@@ -2,6 +2,8 @@
 
 environment: Expensey-Dev
 
+db: ${DB_URL:-file:~/expensey}
+
 server:
   adminContextPath: /admin
   applicationContextPath: /
