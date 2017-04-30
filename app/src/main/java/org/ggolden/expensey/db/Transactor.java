@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DB Transaction support
+ * DB wrapper with Transaction support
  */
 public class Transactor
 {

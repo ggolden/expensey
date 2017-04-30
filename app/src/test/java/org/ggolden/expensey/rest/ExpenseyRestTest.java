@@ -51,7 +51,7 @@ public class ExpenseyRestTest
 	public static final AuthenticationService authenticationService = Mockito.mock(AuthenticationService.class);
 
 	/** mock config */
-	public static Configuration config = new Configuration("db", "environment");
+	public static Configuration config = new Configuration("db");
 
 	/** mock expense service */
 	public static final ExpenseService expenseService = Mockito.mock(ExpenseService.class);

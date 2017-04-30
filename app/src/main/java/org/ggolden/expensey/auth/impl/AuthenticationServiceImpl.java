@@ -68,9 +68,8 @@ public class AuthenticationServiceImpl implements AuthenticationService
 	 *            The configuration
 	 */
 	@Inject
-	public AuthenticationServiceImpl(/* UserService userService */)
+	public AuthenticationServiceImpl()
 	{
-		// this.userService = userService;
 		logger.info("SimpleAuthService()");
 
 		// fill out predefined credentials TODO: from config

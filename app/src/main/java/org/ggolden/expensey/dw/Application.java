@@ -47,6 +47,9 @@ import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+/**
+ * Dropwizard app for Expensey.
+ */
 public class Application extends io.dropwizard.Application<Configuration>
 {
 	final static private Logger logger = LoggerFactory.getLogger(Application.class);
@@ -93,6 +96,10 @@ public class Application extends io.dropwizard.Application<Configuration>
 		database.setUser("u");
 		database.setPassword("p");
 		DBI dbi = new DBIFactory().build(environment, database, "db");
+
+		// Note: if using an external MySQL database... use this instead of the above
+		// final DBIFactory factory = new DBIFactory();
+		// dbi = factory.build(environment, configuration.getDatabase(), "mysql");
 
 		// our wrapper around the dbi for transactions
 		Transactor transactor = new Transactor(dbi);

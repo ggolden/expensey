@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Memory (test) bases storage for Expense
+ * SQL based storage for Expense
  */
 public class ExpenseStorageSql implements ExpenseStorage
 {

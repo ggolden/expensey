@@ -54,7 +54,6 @@ public class ExpenseServiceImpl implements ExpenseService
 	{
 		this.storage = storage;
 
-		// this.userService = userService;
 		logger.info("SimpleExpenseService()");
 	}
 

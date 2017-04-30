@@ -29,7 +29,7 @@ import org.ggolden.expensey.expense.ExpenseStorage;
 import org.ggolden.expensey.expense.model.Expense;
 
 /**
- * Memory (test) bases storage for Expense
+ * Memory (test) based storage for Expense
  */
 public class ExpenseStorageMem implements ExpenseStorage
 {

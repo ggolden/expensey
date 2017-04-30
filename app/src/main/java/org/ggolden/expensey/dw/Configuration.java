@@ -25,14 +25,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Configuration for Expensey.
+ */
 @EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Configuration extends io.dropwizard.Configuration
 {
-	protected String db = null;
-
+	/** database URL */
 	@NotEmpty
-	protected String environment = null;
+	protected String db = null;
 }

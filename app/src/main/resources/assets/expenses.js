@@ -180,7 +180,6 @@
 
 		function addExpense()
 		{
-			$log.log("addExpense", ctrl.expense);
 			post_expense(ctrl.expense,
 			{
 				success : function(data)
