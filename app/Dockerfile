@@ -1,4 +1,4 @@
-FROM java:8-alpine
+FROM openjdk:8-alpine
 
 ADD target/app-latest.jar /home/expensey/expensey.jar
 ADD config.yml /home/expensey/config.yml

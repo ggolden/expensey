@@ -9,9 +9,9 @@ It is an example of how to build a webapp using [AngularJS](https://angularjs.or
 
 Dropwizard apps start with an Application class, found here in org.ggolden.expensey.dw.Application.
 
-The various methods in here get called to setup our components (services), our database, our REST endpoints, and configure the server.  The config.yml file provides some details.
+The various methods in here get called to set up our components (services), our database, our REST endpoints, and configure the server.  The config.yml file provides some details.
 
-Our services and registered as singletons.  They provide:
+Our services are registered as singletons.  They provide:
 - Authentication - user management and authentication
 - Expense - models and persists and applies any business logic to expenses.
 
@@ -25,14 +25,14 @@ Each service is separated into four concerns:
 
 # REST
 
-Our REST classes are also registered as singletons.  Dropwizard (via Jersey) route all incoming REST requests to appropriate methods in the class, based on the annotations such as @GET or @PUT and @Path
+Our REST classes are also registered as singletons.  Dropwizard (via Jersey) routes all incoming REST requests to appropriate methods in the class, based on the annotations such as @GET or @PUT and @Path
 
-Incoming requests are parsed for these methods.  Parameters from the URL are pulled out of the @Path.  Data sent in the request body are parsed from JSON into an appropriate object.  Results are converted into JSON.  See the @Consumes and @Produces annotations.  Jackson is used for the JSON mapping.
+Incoming requests are parsed for these methods.  Parameters from the URL are pulled out of the @Path.  Data sent in the request body is parsed from JSON into an appropriate object.  Results are converted into JSON.  See the @Consumes and @Produces annotations.  Jackson is used for the JSON mapping.
 
 REST methods are responsible for
 - authorizing the request
 - validating the request parameters and data
-- implementing the logic that glues together processing the request
+- implementing the logic that processes the request
 - calling on appropriate services to acomplish the processing steps
 - returning the appropriate response
 
@@ -64,9 +64,9 @@ index.html references all our css and js files, and identifies the Angular app, 
 
 expensey.js defines the Angular module.
 
-routes.js define the routes to the two views, login and expenses.  We always start with login.
+routes.js defines the routes to the two views, login and expenses.  We always start with login.
 
-login.html is the login view, Bootstrap and Angular to present and act on the login UI.  It is backed by the Angular controller in login.js.
+login.html is the login view, using Bootstrap and Angular to present and act on the login UI.  It is backed by the Angular controller in login.js.
 - Note the post_login() method, which mediates the login post to the server, and deals with the asynchronous results with promises and callbacks.
 - Note also in the login() method the transition to the Angular route "/expenses", and that it replaces the current URL, so movement between login and expenses views is not seen by the browser history.
 

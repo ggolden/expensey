@@ -1,7 +1,5 @@
 # Copyright 2017 Glenn R. Golden
 
-environment: Expensey-Dev
-
 db: ${DB_URL:-file:~/expensey}
 
 server:
